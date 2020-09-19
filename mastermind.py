@@ -1,23 +1,11 @@
 #!/usr/bin/env python3
-from time import sleep
-
-# To-dos:
-    # Blog outline
-    # Input validation
-    # Expand the game so it has points system
-    # Refactor code
-    # Add color to output
-
-# COMMENTS + QUALITY OF LIFE EXTRA IMPROVEMENTS -
-    # Handle single/multiplayer modes... Bots = Randomizer | 2-Player = Player input
-    # Check whether we're actually getting 4 inputs... len(user_input.split()) == 4
-    # Keep a record of each loop for inputs and outputs being generated
-
-# STEP 0: PRE-GAME
 """
     - Pick Game Mode:
             - Game Mode determines if solutions are user-inputted or randomly generated
 """
+from time import sleep
+
+
 def get_player_mode(mode=None):
     """Gets player mode, either solo or multiplayer"""
     if mode == "1":
@@ -66,33 +54,43 @@ def get_solution(player_mode):
 
 def mastermind():
     """ mvp """
-    # Game Setup (Select Player Mode, Generate Solution, & Set Guess Limit)
+    # Game Setup (Select Player Mode, Generate Solution, Set Guess Limit & Possible Inputs)
     mode = get_player_mode()
     sleep(2.5)
     screen_clear()
     solution = get_solution(mode)
     solution_color_distribution = {color : solution.count(color) for color in solution}
     guesses_left = 12
+    possible_inputs = "R G B Y O P".split()
+    dirty = 0
 
-    # Initial prompt for codebreaker's first guess
-    prompt = "CodeBreaker, please enter a solution: "
+    # Initial prompt for CodeBreaker's first guess
+    prompt = "CodeBreaker, please enter a guess of 4 colors: "
 
-    # Ask the user for a solution
+    # User Guess Loop
     while guesses_left > 0:
+        dirty = 0
         white_pegs = 0
         black_pegs = 0
         unmatched = []
         user_guess = input(prompt).split()
-        # Sanitize user_guess, reprompt with correct syntax if incorrect
-        # Also check length of user_guess?
+        print(user_guess)
+        if len(user_guess) != 4:
+            print('Your input is invalid. Please enter a solution of 4 colors.\n')
+            continue
+        for i in user_guess:
+            if i not in possible_inputs:
+                print('Your input is invalid. Please select from', possible_inputs)
+                print()
+                dirty = 1
+                break
+        if dirty:
+            continue
         user_colors = {color : user_guess.count(color) for color in user_guess}
 
         if user_guess == solution:
             print("You win!")
             return
-
-        # print("User input: " + str(user_guess) + " |||| " + str(user_colors))
-        # print("Mastermind: " + str(solution) + " |||| " + str(solution_color_distribution))
         
         # Count black pegs
         for i in range(len(user_guess)):
@@ -111,18 +109,10 @@ def mastermind():
         guesses_left -= 1
         print("White Pegs: {:d}".format(white_pegs))
         print("Black Pegs: {:d}".format(black_pegs))
-        prompt = "Wrong! You have {} guesses left.\nGuess again: ".format(guesses_left)
+        prompt = "Try again! You have {} guesses left.\nCodeBreaker, please enter a guess of 4 colors: ".format(guesses_left)
 
-    
     print("You're out of guesses, you lose! Mastermind won with the solution: " + str(solution))
 
 if __name__ == "__main__":
     mastermind()
-
-
-# To-dos:
-    # Blog outline
-    # Input validation
-    # Expand the game so it has points system
-    # Refactor code
-    # Add color to output
+    
