@@ -20,11 +20,13 @@ def get_player_mode(mode=None):
         mode = input("1 or 2 Players? ")
         return get_player_mode(mode)
 
+
 def screen_clear():
     """Clears the screen after mode is chosen and displayed"""
     from subprocess import call
     import os
     call('clear' if os.name == 'posix' else 'cls')
+
 
 def get_solution(player_mode):
     """Generates a code maker list of a possible solution"""
@@ -52,19 +54,18 @@ def get_solution(player_mode):
     else:
         return randomizer(possible_inputs, 4)
 
+
 def mastermind():
     """ mvp """
-    # Game Setup (Select Player Mode, Generate Solution, Set Guess Limit & Possible Inputs)
+    # Game Setup - Select Player Mode, Generate Solution, Set Guess Limit & Possible Inputs, & Display Initial Prompt
     mode = get_player_mode()
     sleep(2.5)
     screen_clear()
     solution = get_solution(mode)
-    solution_color_distribution = {color : solution.count(color) for color in solution}
+    solution_color_distribution = {color: solution.count(color) for color in solution}
     guesses_left = 12
     possible_inputs = "R G B Y O P".split()
     dirty = 0
-
-    # Initial prompt for CodeBreaker's first guess
     prompt = "CodeBreaker, please enter a guess of 4 colors: "
 
     # User Guess Loop
@@ -72,9 +73,7 @@ def mastermind():
         dirty = 0
         white_pegs = 0
         black_pegs = 0
-        unmatched = []
         user_guess = input(prompt).split()
-        print(user_guess)
         if len(user_guess) != 4:
             print('Your input is invalid. Please enter a solution of 4 colors.\n')
             continue
@@ -86,17 +85,14 @@ def mastermind():
                 break
         if dirty:
             continue
-        user_colors = {color : user_guess.count(color) for color in user_guess}
-
+        user_colors = {color: user_guess.count(color) for color in user_guess}
         if user_guess == solution:
             print("You win!")
             return
-        
         # Count black pegs
         for i in range(len(user_guess)):
             if user_guess[i] == solution[i]:
                 black_pegs += 1
-
         # Count matched colors
         matched_colors = 0
         for color in solution_color_distribution.keys():
@@ -110,9 +106,8 @@ def mastermind():
         print("White Pegs: {:d}".format(white_pegs))
         print("Black Pegs: {:d}".format(black_pegs))
         prompt = "Try again! You have {} guesses left.\nCodeBreaker, please enter a guess of 4 colors: ".format(guesses_left)
-
     print("You're out of guesses, you lose! Mastermind won with the solution: " + str(solution))
+
 
 if __name__ == "__main__":
     mastermind()
-    
